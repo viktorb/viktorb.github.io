@@ -19,21 +19,18 @@
     if (response.status === 'connected') {
       // Logged into your app and Facebook.
       successfullLogin();
-      document.getElementById('not-loggedin').class='invisible';
-      document.getElementById('content-holder').class='visible';
+      document.getElementById('content-holder').className='visible';
     } else if (response.status === 'not_authorized') {
       // The person is logged into Facebook, but not your app.
       document.getElementById('status').innerHTML = 'Please log ' +
         'into this app.';
-      document.getElementById('not-loggedin').class='visible';
-      document.getElementById('content-holder').class='invisible';
+      document.getElementById('content-holder').className='invisible';
     } else {
       // The person is not logged into Facebook, so we're not sure if
       // they are logged into this app or not.
       document.getElementById('status').innerHTML = 'Please log ' +
         'into Facebook.';
-      document.getElementById('not-loggedin').class='visible';
-      document.getElementById('content-holder').class='invisible';
+      document.getElementById('content-holder').className='invisible';
     }
   }
 
@@ -110,13 +107,12 @@
         <li><a href="index.html" id="current">Home</a></li>
         <li><a href="about.html">About</a></li>
       </ul>
+      <div id="login">
+  		<div id="status">Please log into this app.</div>
+  		<fb:login-button scope="public_profile,email" onlogin="checkLoginState();" autologoutlink="true">
+		</fb:login-button>
+  	  </div>
     </div>
-  </div>
-  <div id="not-loggedin" class="visible">
-  	<div id="status">Please log into this app.</div>
-  	<br />
-  	<fb:login-button scope="public_profile,email" onlogin="checkLoginState();" autologoutlink="true">
-	</fb:login-button>
   </div>
   <div id="content-holder" class="invisible">
   <div class="headerphoto"></div>
