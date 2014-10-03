@@ -85,6 +85,12 @@
     });
   }
 
+  function fbLogout() {
+  	FB.logout(function(response) {
+  		document.getElementById('status').innerHTML =
+        'You are now logged out!';
+	});
+  }
 </script>
 
 <!--
@@ -93,15 +99,13 @@
   the FB.login() function when clicked.
 -->
 
-<fb:root>
 <fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
 </fb:login-button>
-<fb:logout-button onlogout="checkLoginState();">
-</fb:logout-button>
-</fb:root>
-
-
+<input type="button" onclick="fbLogout();" />
 <div id="status">
+</div>
+
+<div id="fb-root">
 </div>
 
 </body>
