@@ -41,10 +41,10 @@
   	var button = document.getElementById('logging');
   	if(isLogin) {
   		button.value = "Log In";
-  		button.onClick = "fbLogin()";
+  		button.onclick = fbLogin;
   	} else {
   		button.value = "Log Out";
-  		button.onClick = "fbLogout()";
+  		button.onclick = fbLogout;
   	}
   	
   }
