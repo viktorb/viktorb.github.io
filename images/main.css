@@ -227,6 +227,18 @@ input.button {
 	text-align: right;
 }
 
+#logging {
+	font: 0.8em "Trebuchet MS",Tahoma,sans-serif;
+	padding: 0 3px;
+	background: none repeat scroll 0 0 #777;
+    border: 1px solid #fff;
+    color: #fff;
+}
+
+#logging:hover {
+	background: none repeat scroll 0 0 #65944a;
+}
+
 
 /* header photo */
 .headerphoto {
