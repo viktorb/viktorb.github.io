@@ -99,9 +99,10 @@
   the FB.login() function when clicked.
 -->
 
-<fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
-</fb:login-button>
-<input type="button" onclick="fbLogout();" />
+<fb:login-button scope="public_profile,email" onlogin="checkLoginState();" autologoutlink="true">Log In with Facebook</fb:login-button>
+
+<!--input type="button" onclick="fbLogout();" value="Logout"/-->
+
 <div id="status">
 </div>
 
