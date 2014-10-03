@@ -219,7 +219,7 @@ input.button {
 
 #login{
 	position: absolute;
-	right: -5px; top: 15px;
+	right: -5px; top: 10px;
 	font: bolder 1.3em 'Trebuchet MS', sans-serif;
 	color: #FFF;
 	list-style: none;
