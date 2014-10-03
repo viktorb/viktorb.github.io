@@ -84,6 +84,7 @@
         'Thanks for logging in, ' + response.name + '!';
     });
   }
+
 </script>
 
 <!--
@@ -92,8 +93,13 @@
   the FB.login() function when clicked.
 -->
 
+<fb:root>
 <fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
 </fb:login-button>
+<fb:logout-button onlogout="checkLoginState();">
+</fb:logout-button>
+</fb:root>
+
 
 <div id="status">
 </div>
