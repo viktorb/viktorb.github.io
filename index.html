@@ -1,10 +1,12 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title>Facebook Login JavaScript Example</title>
-<meta charset="UTF-8">
+<title>Energy Facebook</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<link rel="stylesheet" href="images/main.css" type="text/css" />
 </head>
 <body>
+
 <script>
   // This is called with the results from from FB.getLoginStatus().
   function statusChangeCallback(response) {
@@ -16,16 +18,22 @@
     // for FB.getLoginStatus().
     if (response.status === 'connected') {
       // Logged into your app and Facebook.
-      testAPI();
+      successfullLogin();
+      document.getElementById('not-loggedin').class='invisible';
+      document.getElementById('content-holder').class='visible';
     } else if (response.status === 'not_authorized') {
       // The person is logged into Facebook, but not your app.
       document.getElementById('status').innerHTML = 'Please log ' +
         'into this app.';
+      document.getElementById('not-loggedin').class='visible';
+      document.getElementById('content-holder').class='invisible';
     } else {
       // The person is not logged into Facebook, so we're not sure if
       // they are logged into this app or not.
       document.getElementById('status').innerHTML = 'Please log ' +
         'into Facebook.';
+      document.getElementById('not-loggedin').class='visible';
+      document.getElementById('content-holder').class='invisible';
     }
   }
 
@@ -76,7 +84,7 @@
 
   // Here we run a very simple test of the Graph API after login is
   // successful.  See statusChangeCallback() for when this call is made.
-  function testAPI() {
+  function successfullLogin() {
     console.log('Welcome!  Fetching your information.... ');
     FB.api('/me', function(response) {
       console.log('Successful login for: ' + response.name);
@@ -86,28 +94,91 @@
   }
 
   function fbLogout() {
+  	console.log('Logging out ... ');
   	FB.logout(function(response) {
-  		document.getElementById('status').innerHTML =
-        'You are now logged out!';
+  		statusChangeCallback(response);
 	});
   }
 </script>
 
-<!--
-  Below we include the Login Button social plugin. This button uses
-  the JavaScript SDK to present a graphical Login button that triggers
-  the FB.login() function when clicked.
--->
-
-<fb:login-button scope="public_profile,email" onlogin="checkLoginState();" autologoutlink="true">Log In with Facebook</fb:login-button>
-
-<!--input type="button" onclick="fbLogout();" value="Logout"/-->
-
-<div id="status">
+<div id="wrap">
+  <div id="header">
+    <div id="header-content">
+      <h1 id="logo">Energy<span class="gray">Facebook</span></h1>
+      <h2 id="slogan">Learn how to utilize your power consumption</h2>
+      <ul>
+        <li><a href="index.html" id="current">Home</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+    </div>
+  </div>
+  <div id="not-loggedin" class="visible">
+  	<div id="status">Please log into this app.</div>
+  	<br />
+  	<fb:login-button scope="public_profile,email" onlogin="checkLoginState();" autologoutlink="true">
+	</fb:login-button>
+  </div>
+  <div id="content-holder" class="invisible">
+  <div class="headerphoto"></div>
+  <div id="content-wrap">
+    <div id="content">
+      <div id="sidebar">
+        <div class="sidebox">
+          <h1>Short About</h1>
+          <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec libero. Suspendisse bibendum. Cras id urna. Morbi tincidunt, orci ac convallis aliquam, lectus turpis varius lorem, eu posuere nunc justo tempus leo.</p>
+        </div>
+        <div class="sidebox">
+          <h1 class="clear">Sidebar Menu</h1>
+          <ul class="sidemenu">
+            <li><a href="index.html" class="top">Home</a></li>
+            <li><a href="#PowerConsumption">PowerConsumption</a></li>
+          </ul>
+        </div>
+      </div>
+      <div id="main">
+        <div class="post"> 
+          <a name="PowerConsumption"></a>
+          <h1>Power Consumption</h1>
+		  <p>Your power consumption here</p>	          
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  <div id="footer">
+    <div id="footer-content">
+      <div class="col float-left">
+        <h3>Site Partners</h3>
+        <ul>
+          <li><strong>Dreamhost</strong> - Reliable Webhosting at $7.95/mo</li>
+          <li><strong>4templates</strong> - Low Cost Hi-Quality Templates</li>
+          <li><strong>TemplateMonster</strong> - Best templates on the net!</li>
+          <li><strong>Fotolia</strong> - Free stock images or from $1</li>
+          <li><strong>Text Link Ads</strong> - Easiest. Money. Ever.</li>
+        </ul>
+      </div>
+      <div class="col float-left">
+        <h3>Links</h3>
+        <ul>
+          <li><a href="http://openwebdesign.org/"><strong>openwebdesign.org</strong></a></li>
+          <li><a href="http://OSWD.org/"><strong>OSWD.org</strong></a></li>
+          <li><a href="http://zeroweb.org/"><strong>zeroweb.org</strong></a></li>
+          <li><a href="http://alistapart.com/"><strong>Alistapart</strong></a></li>
+          <li><a href="http://cssremix.com/"><strong>CSS Remix</strong></a></li>
+        </ul>
+      </div>
+      <div class="col2 float-right">
+        <p> &copy; copyright 2006 <strong>Your Company Name</strong><br />
+          Design by: <a href="http://www.styleshout.com"><strong>styleshout</strong></a> &nbsp; &nbsp; Valid <a href="http://jigsaw.w3.org/css-validator/check/referer"><strong>CSS</strong></a> | <a href="http://validator.w3.org/check/referer"><strong>XHTML</strong></a> 
+        </p>
+      </div>
+    </div>
+  </div>
 </div>
-
+<div class="content-wrap">
+	This template  downloaded form <a href='http://all-free-download.com/free-website-templates/'>free website templates</a>
+</div>
 <div id="fb-root">
 </div>
-
 </body>
 </html>
