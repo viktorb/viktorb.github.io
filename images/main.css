@@ -118,13 +118,30 @@ textarea {
 	color:#777;
 }
 input.button { 
-	margin: 0; 
-	font: bold 1em Arial, Sans-serif; 
-	border: 1px solid #CCC;
-	background: #FFF; 
+	margin: 10px 0px 0px 0px;
+	font: bold 1em "Trebuchet MS", Tahoma, sans-serif;
+	background: none repeat scroll 0 0 #777;
+    border: 1px solid #fff;
+    color: #fff;
 	padding: 2px 3px; 
-	color: #333;	
 }
+input.button:hover {
+	background: none repeat scroll 0 0 #65944a;
+}
+
+.formField {
+	width: 150px;
+}
+
+.checked {
+    border: none;
+    float: right;
+    padding-right: 20px;
+    position: relative;
+    top: -110px;
+    width: 100px;
+}
+
 
 /* search form */
 .searchform {
@@ -259,6 +276,28 @@ input.button {
 	text-align: left;	
 	padding: 0;
 	margin: 0 auto;	
+}
+#graphHolder {
+	width:90%; 
+	text-align: center;
+}
+#graphLegend {
+    text-align: center;
+}
+#graphLegend ul {
+    list-style-type: none;
+    color: black;
+}
+#graphLegend span {
+    display: inline-block;
+    height: 1em;
+    margin: 5px;
+    position: relative;
+    top: 5px;
+    width: 1em;
+}
+#canvas {
+	padding-left: 25px;
 }
 .content-wrap {
 	clear: both;
@@ -396,4 +435,5 @@ input.button {
 /* visibility */
 .visible { visibility: visible; }
 .invisible { visibility: hidden; }
+.hide {display: none;}
 

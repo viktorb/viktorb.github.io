@@ -1,9 +1,10 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title>Energy Facebook</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<link rel="stylesheet" href="images/main.css" type="text/css" />
+	<title>Energy Facebook</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<link rel="stylesheet" href="images/main.css" type="text/css" />
+	<script src="Chart-js/Chart.js"></script>
 </head>
 <body>
 <div id="fb-root"></div>
@@ -119,6 +120,209 @@
   		statusChangeCallback(response);
 	});
   }
+  
+
+// form handling functions //
+
+  function getParams(search_string) {
+
+    var parse = function(params, pairs) {
+    	var pair = pairs[0];
+    	var parts = pair.split('=');
+    	var key = decodeURIComponent(parts[0]);
+    	var value = decodeURIComponent(parts.slice(1).join('='));
+
+    	// Handle multiple parameters of the same name
+    	if (typeof params[key] === "undefined") {
+      		params[key] = value.replace(/\+/g," ");
+    	} else {
+      		params[key] = [].concat(params[key], value);
+    	}
+	
+    	return pairs.length == 1 ? params : parse(params, pairs.slice(1));
+  	};
+
+  	// Get rid of leading ?
+  	return search_string.length == 0 ? {} : parse({}, search_string.substr(1).split('&'));
+  }
+
+
+  function eraseContent(element, value) {
+  	if(element.value == value) {
+  		element.value = '';
+  	}
+  }
+  
+  function checkDefault(element, value) {
+  	if(element.value == '') {
+  		element.value = value;
+  	}
+  }
+  
+  function handleFileData() {
+  	// Check for the various File API support.
+	if (window.File && window.FileReader && window.FileList && window.Blob) {
+  	// Great success! All the File APIs are supported.
+  		console.log('APIs are supported ... ');
+  		var file = document.getElementsByName("dfile")[0];
+  		var reader = new FileReader();
+        reader.onload = function (theFile) {
+        	var content = theFile.target.result;
+        	var lines = content.split('\r\n');
+        	if(lines[0].startsWith("USER_ID") == false || lines.length < 2) {
+        		alert('The data format is not supported!');
+        	} else {
+        		var line = lines[1];
+        		var lineNumber = 1;
+        		var currentUserId;
+        		var data = [];
+        		var consumptionData = {};
+        		var count = 0;
+        		while(line.startsWith("USER_ID") == false && lineNumber < lines.length) {
+        			var userData = line.split(",");
+        			var consumption = {
+        				userId : userData[0],
+        				month : userData[1],
+        				value : userData[2] 
+        			};
+        			currentUserId = userData[0];
+        			data[count] = consumption;
+        			count++;
+        			lineNumber++;
+        			line = lines[lineNumber];
+        		}
+        		lineNumber++;
+        		line = lines[lineNumber];
+        		consumptionData[currentUserId] = data.slice();
+        		console.log(lineNumber);
+        		var otherUserId = "";
+        		count = 0;
+        		while(lineNumber < lines.length) {
+        			var userData = line.split(",");
+        			var consumption = {
+        				userId : userData[0],
+        				month : userData[1],
+        				value : userData[2] 
+        			};
+        			if(consumption.userId == otherUserId || otherUserId == "") {
+        				data[count] = consumption;
+        				count++;
+        				otherUserId = consumption.userId;
+        			} else {
+        				consumptionData[otherUserId] = data.slice();
+        				lineNumber--;
+        				count = 0;
+        				data = [];
+        				otherUserId = consumption.userId;
+        			}
+        			lineNumber++;
+        			line = lines[lineNumber];
+        		}
+        		consumptionData[otherUserId] = data.slice();
+        		console.log(consumptionData);
+        		
+				drawConsumptionGraphs(consumptionData, currentUserId);
+        	}
+        };
+        reader.readAsText(file.files[0]);
+	} else {
+  		alert('The File APIs are not fully supported in this browser.');
+	}
+  }
+  
+  function drawConsumptionGraphs(data, userId) {
+	//var randomScalingFactor = function(){ return Math.round(Math.random()*100); };
+	
+	var userData = [];
+	var i;
+	for(i = 0; i < data[userId].length; i ++) {
+		var element = data[userId][i];
+		userData[parseInt(element.month)-1] = parseInt(element.value);
+	}
+	
+	var aggregateData = [0,0,0,0,0,0,0,0,0,0,0,0];
+	var cnt = 0;
+	var ids = Object.keys(data);
+	for(i=0; i < ids.length; i++) {
+		if(ids[i] != userId) {
+			var elements = data[ids[i]];
+			var j;
+			for(j = 0; j < elements.length; j ++){
+				var element = elements[j];
+				aggregateData[parseInt(element.month)-1] = ((aggregateData[parseInt(element.month)-1] * cnt + parseInt(element.value)) / (cnt + 1)).toFixed(2);
+			}
+			cnt++;
+		}
+	}
+	 
+	var data = {
+		labels : ["Jan","Feb","Mar","Apr","May","Jun","Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+		datasets : [
+		{
+			label: "My Data",
+			fillColor : "rgba(220,220,220,0.5)",
+			strokeColor : "rgba(220,220,220,1)",
+			pointColor : "rgba(220,220,220,1)",
+			pointStrokeColor : "#fff",
+			pointHighlightFill : "#fff",
+			pointHighlightStroke : "rgba(220,220,220,1)",
+			data : userData
+		},
+		{
+			label: "Similar houses",
+			fillColor : "rgba(151,187,205,0.5)",
+			strokeColor : "rgba(151,187,205,1)",
+			pointColor : "rgba(151,187,205,1)",
+			pointStrokeColor : "#fff",
+			pointHighlightFill : "#fff",
+			pointHighlightStroke : "rgba(151,187,205,1)",
+			data : aggregateData
+		}
+		]
+	};
+  	
+	var legendComp = document.getElementById("graphLegend");
+    var graphHolder = document.getElementById("graphHolder");
+    graphHolder.className = "";
+    var ctx = document.getElementById("canvas").getContext("2d");
+	window.myBar = new Chart(ctx).Bar(data, {
+		responsive: true
+	});
+	var legend = window.myBar.generateLegend();
+	legendComp.innerHTML = legend;
+  }
+  
+  function processURL() {
+  	var params = getParams(location.search);
+  	var keys = Object.keys(params);
+  	for(i=0; i < keys.length; i++) {
+  		if(params[keys[i]] != '') {
+	  		document.getElementsByName(keys[i])[0].value = params[keys[i]];
+	  	}
+  	}
+  }
+  
+  function evaluateSteps() {
+  	var details = document.forms['details'].elements;
+  	var notFilled = false;
+  	for(i=0; i < details.length; i++) {
+  		if(details[i].value == '' || details[i].value == 'Number of people' || details[i].value == 'Year Built') {
+  			notFilled = true;
+  		}
+  	}
+  	var checkedElement = document.getElementById("details_checked");
+  	if(notFilled) {
+  		checkedElement.className += " hide";
+  	} else {
+  		checkedElement.className = checkedElement.className.replace(/hide/g, '');
+  	}
+  }
+  
+  window.onload = function() {
+  	processURL();
+  	evaluateSteps();
+  };
+  
 </script>
 
 <div id="wrap">
@@ -139,7 +343,7 @@
   	  </div>
     </div>
   </div>
-  <div id="content-holder" style="display: none;">
+  <div id="content-holder" display: none;">
   <div class="headerphoto"></div>
   <div id="content-wrap">
     <div id="content">
@@ -152,7 +356,9 @@
           <h1 class="clear">Sidebar Menu</h1>
           <ul class="sidemenu">
             <li><a href="index.html" class="top">Home</a></li>
-            <li><a href="#PowerConsumption">PowerConsumption</a></li>
+            <li><a href="#PowerConsumption">Power Consumption</a></li>
+            <li><a href="#HomeDetails">Home Details</a></li>
+            <li><a href="#ConsumptionData">Consumption Data</a></li>
           </ul>
         </div>
       </div>
@@ -160,8 +366,50 @@
         <div class="post"> 
           <a name="PowerConsumption"></a>
           <h1>Power Consumption</h1>
-		  <p>Your power consumption here</p>	          
+		  <p>
+		  	Your power consumption charts in (kWh):
+		  	<div id="graphHolder" class="hide">
+				<div>
+					<canvas id="canvas" height="270" width="480"></canvas>
+				</div>
+				<div id="graphLegend">
+                </div>
+			</div>
+		  </p>	          
         </div>
+        <h3>Enter your home details:</h3>
+        <a name="HomeDetails"></a>
+        <form name="details" onsubmit="handleHouseDetails(this);">
+          <p>
+            <label>Size</label>
+			<select name="dsize">
+				<option value="" selected></option>
+   				<option value="Big House (>300 m2 living space)"> Big House (>300 m2 living space) </option>
+   				<option value="Medium House (>200 m2 living space)"> Medium House (>200 m2 living space) </option>
+   				<option value="Small House (&lt;200 m2 living space)"> Small House (&lt;200 m2 living space) </option>
+   				<option value="Big Apartment (>150 m2 living space)"> Big Apartment (>150 m2 living space) </option>
+   				<option value="Medium Apartment (>80 m2 living space)"> Medium Apartment (>80 m2 living space) </option>
+   				<option value="Small Apartment (&lt;80 m2 living space)"> Small Apartment (&lt;80 m2 living space) </option>
+			</select>
+            <label>Number of people</label>
+            <input name="dnop" value="Number of people" type="text" class="formField" onfocus="eraseContent(this, 'Number of people');" onblur="checkDefault(this, 'Number of people')"/>
+            <label>Year Built</label>
+            <input name="dbuilt" value="Year Built" type="text" class="formField" onfocus="eraseContent(this, 'Year Built');" onblur="checkDefault(this, 'Year Built')"/>
+            <br />
+            <input class="button" type="submit" value="Save"/>
+          </p>
+        </form>
+      	<img id="details_checked" src="images/house-checked.png" class="checked" />
+        <h3>Upload Consumption Data:</h3>
+        <a name="ConsumptionData"></a>
+        <form name="data">
+          <p>
+            <label>Consumption Data File</label>
+            <input name="dfile" value="" type="file" size="30" accept="*.csv"/>
+            <br />
+            <input class="button" type="button" value="Upload" onclick="handleFileData();"/>
+          </p>
+        </form>
       </div>
     </div>
   </div>
