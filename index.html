@@ -5,6 +5,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 	<link rel="stylesheet" href="images/main.css" type="text/css" />
 	<script src="Chart-js/Chart.js"></script>
+	<script src="Chart-js/src/Chart.StackedBar.js"></script>
 </head>
 <body>
 <div id="fb-root"></div>
@@ -241,6 +242,8 @@
 	}
 	
 	var aggregateData = [0,0,0,0,0,0,0,0,0,0,0,0];
+	var minData = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1];
+	var maxData = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1];
 	var cnt = 0;
 	var ids = Object.keys(data);
 	for(i=0; i < ids.length; i++) {
@@ -249,35 +252,71 @@
 			var j;
 			for(j = 0; j < elements.length; j ++){
 				var element = elements[j];
-				aggregateData[parseInt(element.month)-1] = ((aggregateData[parseInt(element.month)-1] * cnt + parseInt(element.value)) / (cnt + 1)).toFixed(2);
+				var idx = parseInt(element.month)-1;
+				var value = parseInt(element.value);
+				aggregateData[idx] = ((aggregateData[idx] * cnt + value) / (cnt + 1)).toFixed(2);
+				if(minData[idx] < 0 || minData[idx] > value) {
+				    minData[idx] = value;
+				}
+				
+				if(maxData[idx] < 0 || maxData[idx] < value) {
+				    maxData[idx] = value;
+				}
 			}
 			cnt++;
 		}
 	}
+	
+	/*for(i=0; i < 12; i++) {
+	    userData[i] = userData[i] - aggregateData[i];
+	    minData[i] = minData[i] - aggregateData[i];
+	    maxData[i] = maxData[i] - aggregateData[i];
+	}*/
 	 
 	var data = {
 		labels : ["Jan","Feb","Mar","Apr","May","Jun","Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
 		datasets : [
 		{
 			label: "My Data",
-			fillColor : "rgba(220,220,220,0.5)",
-			strokeColor : "rgba(220,220,220,1)",
-			pointColor : "rgba(220,220,220,1)",
-			pointStrokeColor : "#fff",
-			pointHighlightFill : "#fff",
-			pointHighlightStroke : "rgba(220,220,220,1)",
+            fillColor : "rgba(40, 163, 47, 0.8)",
+            strokeColor : "rgba(40, 163, 47, 1)",
+            pointColor : "rgba(40, 163, 47, 1)",
+            pointStrokeColor : "#fff",
+            pointHighlightFill : "#fff",
+            pointHighlightStroke : "rgba(40, 163, 47, 1)",
 			data : userData
 		},
-		{
-			label: "Similar houses",
-			fillColor : "rgba(151,187,205,0.5)",
-			strokeColor : "rgba(151,187,205,1)",
-			pointColor : "rgba(151,187,205,1)",
-			pointStrokeColor : "#fff",
-			pointHighlightFill : "#fff",
-			pointHighlightStroke : "rgba(151,187,205,1)",
-			data : aggregateData
-		}
+		/*{
+            label: "Similar houses min",
+            fillColor : "rgba(81, 78, 75, 0.3)",
+            strokeColor : "rgba(81, 78, 75, 0.6)",
+            pointColor : "rgba(81, 78, 75, 0.6)",
+            pointStrokeColor : "#fff",
+            pointHighlightFill : "#fff",
+            pointHighlightStroke : "rgba(81, 78, 75, 0.6)",
+            data : minData
+        },*/
+        {
+            label: "Similar houses avarage",
+            fillColor : "rgba(81, 78, 75, 0.5)",
+            strokeColor : "rgba(81, 78, 75, 0.7)",
+            pointColor : "rgba(81, 78, 75, 0.7)",
+            pointStrokeColor : "#fff",
+            pointHighlightFill : "#fff",
+            pointHighlightStroke : "rgba(81, 78, 75, 0.7)",
+            data : aggregateData
+        }
+        /*,
+        {
+            label: "Similar houses max",
+            fillColor : "rgba(81, 78, 75, 0.7)",
+            strokeColor : "rgba(81, 78, 75, 0.9)",
+            pointColor : "rgba(81, 78, 75, 0.9)",
+            pointStrokeColor : "#fff",
+            pointHighlightFill : "#fff",
+            pointHighlightStroke : "rgba(81, 78, 75, 0.9)",
+            data : maxData
+        }*/
 		]
 	};
   	
@@ -286,7 +325,7 @@
     graphHolder.className = "";
     var ctx = document.getElementById("canvas").getContext("2d");
 	window.myBar = new Chart(ctx).Bar(data, {
-		responsive: true
+		responsive: true,
 	});
 	var legend = window.myBar.generateLegend();
 	legendComp.innerHTML = legend;
@@ -343,14 +382,14 @@
   	  </div>
     </div>
   </div>
-  <div id="content-holder" display: none;">
+  <div id="content-holder" style="display:none">
   <div class="headerphoto"></div>
   <div id="content-wrap">
     <div id="content">
       <div id="sidebar">
         <div class="sidebox">
-          <h1>Short About</h1>
-          <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec libero. Suspendisse bibendum. Cras id urna. Morbi tincidunt, orci ac convallis aliquam, lectus turpis varius lorem, eu posuere nunc justo tempus leo.</p>
+          <h1>What is EFB?</h1>
+          <p>This is an intiative for educating and inspiring people to optimize their energy usage. In order to be able to provide accurate information we encourage people to share their power consumption, participate in group challenges and be active.</p>
         </div>
         <div class="sidebox">
           <h1 class="clear">Sidebar Menu</h1>
